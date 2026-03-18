@@ -1,0 +1,11 @@
+# Core AI model for speech-to-text
+openai-whisper
+
+# Audio processing & format conversion
+pydub
+
+# SRT file utilities (optional helper)
+pysrt
+
+# FFmpeg Python bindings (ffmpeg must also be installed on the system)
+ffmpeg-python
