@@ -1,6 +1,6 @@
 # 🎬 Speech-to-Subtitle Generator
 
-Automatically transcribe any audio or video file and generate a properly formatted `.srt` subtitle file — powered by **OpenAI Whisper**, running 100% locally on your machine.
+Automatically transcribe any audio or video file and generate a properly formatted `.srt` subtitle file with **OpenAI Whisper**. It now works locally and in **Google Colab** or **Kaggle**.
 
 ---
 
@@ -9,8 +9,9 @@ Automatically transcribe any audio or video file and generate a properly formatt
 - 🎙️ Transcribes MP4, MP3, WAV, MKV, MOV, M4A, FLAC, OGG
 - ⏱️ Accurate timestamps in `HH:MM:SS,mmm` format
 - ✂️ Automatic line splitting (no lines longer than 42 chars)
-- 🖥️ Runs 100% locally — no API keys, no cost, no data sent anywhere
+- 🖥️ Runs locally or in Colab/Kaggle
 - 🔧 Configurable model size and output directory
+- 📓 Includes a notebook-friendly Python function you can import and call directly
 
 ---
 
@@ -42,6 +43,54 @@ venv\Scripts\activate          # Windows
 pip install -r requirements.txt
 ```
 
+### 3. Colab Setup
+
+```bash
+!apt-get -qq update
+!apt-get -qq install ffmpeg
+!pip install -r requirements.txt
+```
+
+Then in a notebook cell:
+
+```python
+from main import generate_subtitles
+
+srt_path = generate_subtitles(
+    input_path="/content/your_file.mp4",
+    model_name="small",
+    device="auto",
+)
+
+print(srt_path)
+```
+
+By default, output files are written to `/content/subtitles` when the input folder is not writable.
+
+### 4. Kaggle Setup
+
+In a Kaggle notebook, add this project as a dataset or upload the files, then run:
+
+```bash
+!pip install -r requirements.txt
+```
+
+Then call it from Python:
+
+```python
+from main import generate_subtitles
+
+srt_path = generate_subtitles(
+    input_path="/kaggle/input/your-dataset/your_file.mp4",
+    model_name="small",
+    device="auto",
+)
+
+print(srt_path)
+```
+
+If your input comes from `/kaggle/input`, the generated `.srt` is automatically saved to `/kaggle/working/subtitles`.
+
 ---
 
 ## 🚀 Usage
@@ -64,6 +113,10 @@ python main.py assets/interview.wav --output ./subtitles/
 
 # Set a shorter max line length and skip the preview
 python main.py assets/video.mp4 --max-chars 38 --no-preview
+
+# Force CPU or GPU if needed
+python main.py assets/video.mp4 --device cpu
+python main.py assets/video.mp4 --device cuda
 ```
 
 ### All Options
@@ -75,6 +128,7 @@ python main.py assets/video.mp4 --max-chars 38 --no-preview
 | `--output` | Same folder as input | Directory to save the `.srt` file |
 | `--max-chars` | `42` | Max characters per subtitle line before auto-splitting |
 | `--no-preview` | Off | Skip printing transcription preview to terminal |
+| `--device` | `auto` | Use `auto`, `cpu`, or `cuda` |
 
 ---
 
@@ -83,7 +137,7 @@ python main.py assets/video.mp4 --max-chars 38 --no-preview
 ```
 subtitle-generator/
 │
-├── main.py           # CLI entry point — run this
+├── main.py           # CLI entry point + notebook-friendly generate_subtitles()
 ├── utils.py          # Timestamp formatting & line splitting logic
 ├── requirements.txt  # Python dependencies
 ├── README.md         # This file
@@ -102,7 +156,7 @@ subtitle-generator/
 | `medium` | 🟡 Slower | ⭐⭐⭐⭐⭐ | ~5 GB |
 | `large` | 🔴 Slowest | ⭐⭐⭐⭐⭐ | ~10 GB |
 
-> **Recommendation:** `small` is the best default for most use cases.
+> **Recommendation:** `small` is the best default for most use cases. For slower Colab or CPU-only runs, start with `base`.
 
 ---
 
