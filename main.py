@@ -90,7 +90,7 @@ def resolve_device(device: str = "auto") -> str:
     """Resolves the execution device, preferring CUDA when available."""
     try:
         import torch
-    except ModuleNotFoundError:
+    except (ModuleNotFoundError, ImportError):
         if device == "cuda":
             print("[WARN] CUDA was requested but PyTorch is not installed yet. Falling back to CPU.")
         return "cpu"
